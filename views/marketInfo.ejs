@@ -1,0 +1,59 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <title>마켓 정보</title>
+</head>
+<style>
+   .chgColor{
+      background-color:red;
+   }
+
+   .unchgColor{
+     background-color:white;
+   }
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.4.1.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU=" crossorigin="anonymous"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+   var mktStr = '<%= mktStr %>';
+
+   timer = setInterval( function () {
+       $.ajax ({
+           "url" : "https://api.upbit.com/v1/ticker?markets=" + mktStr,
+           cache : false,
+           success : function (data) {
+              for(var i = 0 ; i < data.length; i++){
+                var obj  = $('#' + data[i].market).siblings('#trade_price');
+                var prev = obj.text();
+                var next = data[i].trade_price;
+                if(prev!=next){
+                    var val = $('#' + data[i].market).siblings('#trade_price').text(data[i].trade_price);
+                    $(val).fadeOut(250).fadeIn(250);
+                }
+              }
+           }
+       });
+     }, 3000);
+});
+</script>
+<body>
+    <table>
+      <tr>
+       <td>마켓명</td>
+       <td>한글명</td>
+       <td>현재가</td>
+       <td>입금주소생성</td>
+      </tr>
+      <% for(let i = 0 ; i < data.length; i++){%>
+      <tr>
+      <td id="<%=data[i].market%>"><%=data[i].market %> </td>
+      <td><%=data[i].korean_name %> </td>
+      <td id="trade_price"><%=data[i].trade_price %> </td>
+      <td><button>매매 시작</button><input type="text"></input></td>
+      </tr>
+      <% } %>
+    </table>
+</body>
+</html>
